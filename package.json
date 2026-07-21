@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Chat con personajes usando Gemini AI",
   "scripts": {
-    "dev": "echo local-dev",
     "test": "vitest",
     "test:run": "vitest run",
     "build": "echo ok"

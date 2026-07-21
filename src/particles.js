@@ -1,232 +1,245 @@
-const canvas = document.getElementById("bg-canvas");
-const ctx = canvas.getContext("2d");
+import { formatMessage, isValidMessage, getCharacterByKey } from "./utils.js";
+import { fetchAIResponse } from "./services/ai.js";
 
-let particles = [];
-let animationId = null;
-let currentTheme = null;
-
-const themes = {
-  "theme-hermione": {
-    symbols: ["✦", "✧", "⋆", "★"],
-    colors: [
-      "255, 100, 130",
-      "220, 80, 110",
-      "255, 180, 200",
-      "200, 60, 90"
-    ],
-    count: 35,
-    minSize: 18,
-    maxSize: 42,
-    glow: "255, 100, 130",
-    speedMult: 1
+const characters = {
+  hermione: {
+    name: "Hermione Granger",
+    emoji: "🧙‍♀️",
+    theme: "theme-hermione",
+    systemPrompt: `Sos Hermione Granger de Harry Potter. Respondés de forma inteligente,
+    precisa y un poco condescendiente. Citás libros y reglas. Corregís errores de los demás.
+    Tus respuestas son cortas, como en un chat.`
   },
-
-  "theme-dobby": {
-    symbols: ["✦", "❋", "◆", "✧"],
-    colors: [
-      "80, 200, 120",
-      "50, 180, 90",
-      "120, 220, 150",
-      "40, 150, 80"
-    ],
-    count: 35,
-    minSize: 18,
-    maxSize: 42,
-    glow: "80, 200, 120",
-    speedMult: 0.6
+  dobby: {
+    name: "Dobby",
+    emoji: "🧦",
+    theme: "theme-dobby",
+    systemPrompt: `Sos Dobby, el elfo doméstico de Harry Potter. Siempre hablás en tercera
+    persona ("Dobby cree que...", "Dobby está feliz de..."). Sos muy dramático y leal.
+    Tus respuestas son cortas, como en un chat.`
   },
-
-  "theme-homero": {
-    symbols: ["★", "✦", "✧", "◉"],
-    colors: [
-      "255, 200, 50",
-      "240, 170, 20",
-      "255, 220, 80",
-      "210, 140, 10"
-    ],
-    count: 30,
-    minSize: 20,
-    maxSize: 48,
-    glow: "255, 200, 50",
-    speedMult: 0.8
+  homero: {
+    name: "Homero Simpson",
+    emoji: "🍩",
+    theme: "theme-homero",
+    systemPrompt: `Sos Homero Simpson. Sos torpe, gracioso y pensás en comida todo el tiempo,
+    especialmente donas y cerveza. Decís "Mmm..." seguido de algo rico. Usás frases como
+    "D'oh!" cuando te equivocás. Tus respuestas son cortas, como en un chat.`
   },
-
-  "theme-lisa": {
-    symbols: ["♪", "♫", "✦", "⋆"],
-    colors: [
-      "80, 160, 255",
-      "50, 130, 220",
-      "120, 190, 255",
-      "40, 110, 200"
-    ],
-    count: 35,
-    minSize: 18,
-    maxSize: 44,
-    glow: "80, 160, 255",
-    speedMult: 0.5
-  },
-
-  default: {
-    symbols: ["✦", "✧", "⋆", "★"],
-    colors: [
-      "167, 139, 250",
-      "140, 100, 230",
-      "190, 160, 255"
-    ],
-    count: 30,
-    minSize: 18,
-    maxSize: 40,
-    glow: "167, 139, 250",
-    speedMult: 0.5
+  lisa: {
+    name: "Lisa Simpson",
+    emoji: "🎷",
+    theme: "theme-lisa",
+    systemPrompt: `Sos Lisa Simpson. Sos inteligente, reflexiva y comprometida con causas sociales.
+    Tocás saxofón y luchás por la justicia. Tenés una opinión fundamentada sobre todo.
+    Tus respuestas son cortas, como en un chat.`
   }
 };
 
-function resize() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+let currentCharacter = characters.hermione;
+let messages = [];
+let isLoading = false;
 
-function createParticle(theme) {
-  const config = themes[theme] || themes.default;
-
-  const color =
-    config.colors[Math.floor(Math.random() * config.colors.length)];
-
-  return {
-    x: Math.random() * canvas.width,
-
-    y: Math.random() * canvas.height,
-
-    symbol:
-      config.symbols[
-        Math.floor(Math.random() * config.symbols.length)
-      ],
-
-    size:
-      Math.random() *
-        (config.maxSize - config.minSize) +
-      config.minSize,
-
-    opacity: Math.random() * 0.25 + 0.35,
-
-    speedX:
-      (Math.random() - 0.5) *
-      0.5 *
-      (config.speedMult || 1),
-
-    speedY:
-      -(Math.random() * 0.7 + 0.3) *
-      (config.speedMult || 1),
-
-    color,
-
-    glow: config.glow,
-
-    rotation: Math.random() * Math.PI * 2,
-
-    rotationSpeed:
-      (Math.random() - 0.5) * 0.01
-  };
-}
-
-function initParticles(theme) {
-  const config = themes[theme] || themes.default;
-
-  particles = Array.from(
-    { length: config.count },
-    () => createParticle(theme)
+function getCurrentCharacterKey() {
+  return Object.keys(characters).find(
+    (key) => characters[key] === currentCharacter
   );
 }
 
-function animate(theme) {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function applyTheme() {
+  const container = document.querySelector(".chat-container");
+  if (!container) return;
+  container.className = `chat-container ${currentCharacter.theme}`;
+  document.body.className = currentCharacter.theme;
+}
 
-  particles.forEach((p, i) => {
-    p.x += p.speedX;
-    p.y += p.speedY;
+function saveMessages() {
+  const key = `chat_${getCurrentCharacterKey()}`;
+  localStorage.setItem(key, JSON.stringify(messages));
+}
 
-    p.rotation += p.rotationSpeed;
+function loadMessages() {
+  const key = `chat_${getCurrentCharacterKey()}`;
+  messages = JSON.parse(localStorage.getItem(key)) || [];
+}
 
-    ctx.save();
+function getTimestamp() {
+  const now = new Date();
+  return now.toLocaleTimeString("es-AR", {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
 
-    ctx.translate(p.x, p.y);
+function copyToClipboard(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = "✅";
+    setTimeout(() => {
+      btn.textContent = "📋";
+    }, 1500);
+  });
+}
 
-    ctx.rotate(p.rotation);
+export function renderChat(charKey) {
+  if (charKey && getCharacterByKey(characters, charKey)) {
+    currentCharacter = characters[charKey];
+    localStorage.setItem("selectedCharacter", charKey);
+  }
 
-    ctx.globalAlpha = p.opacity;
+  loadMessages();
 
-    ctx.shadowColor = `rgba(${p.glow}, 0.25)`;
+  const app = document.querySelector("#app");
 
-    ctx.shadowBlur = 8;
+  app.innerHTML = `
+    <div class="chat-container ${currentCharacter.theme}">
+      <div class="chat-header">
+        <h2>${currentCharacter.emoji} Chateando con ${currentCharacter.name}</h2>
+        <button id="clear-chat">🗑️ Borrar historial</button>
+      </div>
 
-    ctx.font = `${p.size}px sans-serif`;
+      <div id="character-selector">
+        ${Object.entries(characters)
+          .map(
+            ([key, char]) => `
+              <button data-c="${key}" class="${characters[key] === currentCharacter ? "active" : ""}">
+                ${char.emoji} ${char.name.split(" ")[0]}
+              </button>
+            `
+          )
+          .join("")}
+      </div>
 
-    ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
+      <div id="chat-box"></div>
 
-    ctx.textAlign = "center";
+      <div class="input-area">
+        <input id="input" placeholder="Escribí tu mensaje..." autocomplete="off" />
+        <button id="send">Enviar</button>
+      </div>
+    </div>
+  `;
 
-    ctx.textBaseline = "middle";
+  applyTheme();
 
-    ctx.fillText(p.symbol, 0, 0);
-
-    ctx.restore();
-
-    if (p.y < -50) {
-      particles[i] = createParticle(theme);
-
-      particles[i].y = canvas.height + 20;
-
-      particles[i].x =
-        Math.random() * canvas.width;
-    }
-
-    if (p.x < -50) {
-      p.x = canvas.width + 20;
-    }
-
-    if (p.x > canvas.width + 50) {
-      p.x = -20;
-    }
+  document.querySelectorAll("[data-c]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const selected = btn.dataset.c;
+      currentCharacter = characters[selected];
+      localStorage.setItem("selectedCharacter", selected);
+      loadMessages();
+      renderChat(selected);
+    });
   });
 
-  animationId = requestAnimationFrame(() =>
-    animate(theme)
-  );
+  document.querySelector("#send").addEventListener("click", handleSend);
+
+  document.querySelector("#input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") handleSend();
+  });
+
+  document.querySelector("#clear-chat").addEventListener("click", () => {
+    messages = [];
+    const key = `chat_${getCurrentCharacterKey()}`;
+    localStorage.removeItem(key);
+    renderMessages();
+  });
+
+  renderMessages();
 }
 
-export function startParticles(theme) {
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
-  }
+function renderMessages() {
+  const box = document.querySelector("#chat-box");
+  if (!box) return;
 
-  currentTheme = theme || "default";
+  box.innerHTML = "";
 
-  resize();
+  messages.forEach((m) => {
+    if (m.loading) {
+      const div = document.createElement("div");
+      div.classList.add("message", "bot", "typing-indicator");
+      div.innerHTML = `<span></span><span></span><span></span>`;
+      box.appendChild(div);
+      return;
+    }
 
-  initParticles(currentTheme);
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", m.role === "user" ? "user-wrapper" : "bot-wrapper");
 
-  animate(currentTheme);
+    const div = document.createElement("div");
+    div.classList.add("message", m.role === "user" ? "user" : "bot");
+    div.textContent = m.content;
+
+    const meta = document.createElement("div");
+    meta.classList.add("message-meta");
+
+    const time = document.createElement("span");
+    time.classList.add("timestamp");
+    time.textContent = m.timestamp || getTimestamp();
+    meta.appendChild(time);
+
+    if (m.role === "assistant") {
+      const copyBtn = document.createElement("button");
+      copyBtn.classList.add("copy-btn");
+      copyBtn.textContent = "📋";
+      copyBtn.title = "Copiar respuesta";
+      copyBtn.addEventListener("click", () => copyToClipboard(m.content, copyBtn));
+      meta.appendChild(copyBtn);
+    }
+
+    wrapper.appendChild(div);
+    wrapper.appendChild(meta);
+    box.appendChild(wrapper);
+  });
+
+  box.scrollTop = box.scrollHeight;
 }
 
-export function stopParticles() {
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
-  }
+function handleSend() {
+  const input = document.querySelector("#input");
 
-  ctx.clearRect(
-    0,
-    0,
-    canvas.width,
-    canvas.height
-  );
+  if (!input || !isValidMessage(input.value) || isLoading) return;
+
+  messages.push(formatMessage("user", input.value.trim()));
+  messages[messages.length - 1].timestamp = getTimestamp();
+  saveMessages();
+  input.value = "";
+  input.focus();
+  renderMessages();
+  simulateResponse();
 }
 
-window.addEventListener("resize", () => {
-  resize();
+async function simulateResponse() {
+  isLoading = true;
 
-  if (currentTheme) {
-    initParticles(currentTheme);
+  const sendBtn = document.querySelector("#send");
+  const inputEl = document.querySelector("#input");
+
+  if (sendBtn) sendBtn.disabled = true;
+  if (inputEl) inputEl.disabled = true;
+
+  messages.push(formatMessage("assistant", "Escribiendo...", true));
+  renderMessages();
+
+  try {
+    const cleanMessages = messages.filter((m) => !m.loading);
+    const data = await fetchAIResponse(currentCharacter, cleanMessages);
+
+    messages.pop();
+
+    const reply = formatMessage("assistant", data.reply || "No pude responder 😢");
+    reply.timestamp = getTimestamp();
+    messages.push(reply);
+    saveMessages();
+
+  } catch (error) {
+    messages.pop();
+    const errMsg = formatMessage("assistant", "Error al conectar 😢");
+    errMsg.timestamp = getTimestamp();
+    messages.push(errMsg);
   }
-});
+
+  isLoading = false;
+  if (sendBtn) sendBtn.disabled = false;
+  if (inputEl) inputEl.disabled = false;
+
+  renderMessages();
+}

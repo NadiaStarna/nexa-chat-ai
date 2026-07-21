@@ -5,7 +5,7 @@ export function renderAbout(app) {
       <h1>Sobre este proyecto</h1>
 
       <div class="about-card">
-        <h2>¿Qué es esto?</h2>
+        <h2><i class="ti ti-info-circle"></i> ¿Qué es esto?</h2>
 
         <p>
           Una aplicación web de chat interactivo desarrollada
@@ -17,30 +17,43 @@ export function renderAbout(app) {
       </div>
 
       <div class="about-card">
-        <h2>Los personajes</h2>
+        <h2><i class="ti ti-users"></i> Los personajes</h2>
 
-        <p>
-          🧙‍♀️ <strong>Hermione Granger</strong><br>
-          🧦 <strong>Dobby</strong><br>
-          🍩 <strong>Homero Simpson</strong><br>
-          🎷 <strong>Lisa Simpson</strong>
-        </p>
+        <div class="about-character-list">
+          <div class="about-character-item char-hermione">
+            <i class="ti ti-book-2"></i>
+            <strong>Hermione Granger</strong>
+          </div>
+          <div class="about-character-item char-dobby">
+            <i class="ti ti-shoe"></i>
+            <strong>Dobby</strong>
+          </div>
+          <div class="about-character-item char-homero">
+            <i class="ti ti-cookie"></i>
+            <strong>Homero Simpson</strong>
+          </div>
+          <div class="about-character-item char-lisa">
+            <i class="ti ti-music"></i>
+            <strong>Lisa Simpson</strong>
+          </div>
+        </div>
       </div>
 
       <div class="about-card">
-        <h2>Tecnologías</h2>
+        <h2><i class="ti ti-code"></i> Tecnologías</h2>
 
-        <p>
-          HTML, CSS y JavaScript vanilla.
-          Routing SPA con History API.
-
-          Backend con Vercel Serverless Functions.
-          IA con Google Gemini API.
-        </p>
+        <div class="about-tech-list">
+          <span class="about-tech-item"><i class="ti ti-brand-html5"></i> HTML</span>
+          <span class="about-tech-item"><i class="ti ti-brand-css3"></i> CSS</span>
+          <span class="about-tech-item"><i class="ti ti-brand-javascript"></i> JavaScript</span>
+          <span class="about-tech-item"><i class="ti ti-route"></i> SPA Routing</span>
+          <span class="about-tech-item"><i class="ti ti-server-2"></i> Vercel Functions</span>
+          <span class="about-tech-item"><i class="ti ti-sparkles"></i> Google Gemini API</span>
+        </div>
       </div>
 
       <div class="about-card">
-        <h2>Desarrollado por</h2>
+        <h2><i class="ti ti-user-circle"></i> Desarrollado por</h2>
 
         <p>
           Nadia Starna — FT73 — 2026

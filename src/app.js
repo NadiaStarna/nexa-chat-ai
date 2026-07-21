@@ -5,6 +5,8 @@ import { renderAbout } from "./views/about.js";
 const app = document.querySelector("#app");
 
 function router() {
+  document.body.className = "";
+
   const path = window.location.pathname;
 
   if (path === "/" || path === "/home") {

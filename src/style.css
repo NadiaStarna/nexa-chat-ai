@@ -1,3 +1,6 @@
+/* ===== FUENTES ===== */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Baloo+2:wght@600;700&family=Luckiest+Guy&family=Space+Grotesk:wght@500;600&family=Inter:wght@400;500;600;700&display=swap');
+
 /* ===== RESET & BASE ===== */
 * {
   box-sizing: border-box;
@@ -5,14 +8,12 @@
   padding: 0;
 }
 
+html, body {
+  overflow-x: hidden;
+}
+
 #bg-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 nav, #app {
@@ -21,28 +22,80 @@ nav, #app {
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0f0f1a;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #0c0c14;
   color: #e8e8f0;
   min-height: 100vh;
-  transition: background 0.5s ease;
+  transition: background-color 0.5s ease;
 }
 
-/* ===== TEMAS POR PERSONAJE — BODY ===== */
+/* ===== HOME / ABOUT (sin personaje seleccionado) — coral + violeta ===== */
+body:not(.theme-hermione):not(.theme-dobby):not(.theme-homero):not(.theme-lisa) {
+  background-color: #0c0c14;
+  background-image:
+    radial-gradient(circle at 8% 0%, rgba(255, 138, 92, 0.16), transparent 32%),
+    radial-gradient(circle at 92% 100%, rgba(124, 92, 255, 0.16), transparent 32%);
+}
+
+/* ===== TEMAS POR PERSONAJE — BODY (blob con gradiente CSS, sin imagen) ===== */
 body.theme-hermione {
-  background: linear-gradient(135deg, #1a0a0f 0%, #2d1420 50%, #1a0a0f 100%);
+  background-color: #160810;
+  background-image: radial-gradient(circle at 90% 0%, rgba(155, 44, 74, 0.22), transparent 38%);
 }
 
 body.theme-dobby {
-  background: linear-gradient(135deg, #071a0f 0%, #0f2d1a 50%, #071a0f 100%);
+  background-color: #071309;
+  background-image: radial-gradient(circle at 90% 100%, rgba(45, 122, 79, 0.22), transparent 38%);
 }
 
 body.theme-homero {
-  background: linear-gradient(135deg, #1a1200 0%, #2d2000 50%, #1a1200 100%);
+  background-color: #1f1602;
+  background-image: radial-gradient(circle at 90% 0%, rgba(212, 147, 10, 0.22), transparent 38%);
 }
 
 body.theme-lisa {
-  background: linear-gradient(135deg, #00101a 0%, #001a2d 50%, #00101a 100%);
+  background-color: #03111c;
+  background-image: radial-gradient(circle at 90% 100%, rgba(26, 109, 181, 0.22), transparent 38%);
+}
+
+/* ===== ÍCONO DECORATIVO DE FONDO (elemento HTML real, no imagen) ===== */
+.bg-watermark {
+  position: fixed;
+  font-size: 260px;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.07;
+}
+
+.theme-hermione .bg-watermark {
+  top: -40px;
+  right: -40px;
+  color: #f3d9df;
+}
+
+.theme-dobby .bg-watermark {
+  bottom: -40px;
+  right: -40px;
+  color: #c9f0d8;
+}
+
+.theme-homero .bg-watermark {
+  top: -40px;
+  right: -40px;
+  color: #ffd27a;
+}
+
+.theme-lisa .bg-watermark {
+  bottom: -40px;
+  right: -40px;
+  color: #c9e6ff;
+}
+
+@media (max-width: 600px) {
+  .bg-watermark {
+    font-size: 160px;
+  }
 }
 
 /* ===== NAV ===== */
@@ -78,6 +131,12 @@ nav a:hover {
   border-color: rgba(255, 255, 255, 0.15);
 }
 
+nav a.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
 /* ===== LAYOUT PRINCIPAL ===== */
 #app {
   max-width: 620px;
@@ -104,7 +163,7 @@ nav a:hover {
 }
 
 .home-container h1 span {
-  background: linear-gradient(90deg, #a78bfa, #f472b6);
+  background: linear-gradient(90deg, #ff8a5c, #7c5cff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -147,14 +206,13 @@ nav a:hover {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.character-card .emoji {
+.character-card .icon-tabler {
   font-size: 2rem;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
   transition: transform 0.3s ease;
 }
 
-.character-card:hover .emoji {
-  transform: scale(1.2);
+.character-card:hover .icon-tabler {
+  transform: scale(1.15);
 }
 
 .character-card h3 {
@@ -169,8 +227,13 @@ nav a:hover {
   line-height: 1.4;
 }
 
+.character-card.card-hermione .icon-tabler { color: #e08fa8; }
+.character-card.card-dobby .icon-tabler { color: #6fcf97; }
+.character-card.card-homero .icon-tabler { color: #f0c368; }
+.character-card.card-lisa .icon-tabler { color: #6fa8dc; }
+
 .btn-primary {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  background: linear-gradient(135deg, #ff8a5c, #7c5cff);
   color: white;
   border: none;
   padding: 0.85rem 2.5rem;
@@ -179,13 +242,13 @@ nav a:hover {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.35);
+  box-shadow: 0 4px 20px rgba(124, 92, 255, 0.3);
   letter-spacing: 0.02em;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+  box-shadow: 0 8px 30px rgba(124, 92, 255, 0.45);
 }
 
 /* ===== ABOUT ===== */
@@ -203,12 +266,61 @@ nav a:hover {
 }
 
 .about-container h2 {
-  color: #a78bfa;
+  color: #b9a3ff;
   margin-bottom: 0.4rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.about-character-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.about-character-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.about-character-item i {
+  font-size: 1.2rem;
+}
+
+.char-hermione i { color: #e08fa8; }
+.char-dobby i { color: #6fcf97; }
+.char-homero i { color: #f0c368; }
+.char-lisa i { color: #6fa8dc; }
+
+.about-tech-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.about-tech-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 0.35rem 0.8rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.about-tech-item i {
+  font-size: 0.95rem;
+  color: #b9a3ff;
 }
 
 .about-container p {
@@ -251,9 +363,19 @@ nav a:hover {
 }
 
 .chat-header h2 {
-  font-size: 1rem;
+  font-size: 1.15rem;
   color: white;
   font-weight: 600;
+  font-family: var(--theme-font-display, 'Inter', sans-serif);
+  letter-spacing: 0.01em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.chat-header h2 .icon-tabler {
+  color: var(--theme-primary, #7c3aed);
+  font-size: 1.2rem;
 }
 
 #clear-chat {
@@ -383,6 +505,7 @@ nav a:hover {
   color: rgba(255, 255, 255, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom-left-radius: 4px;
+  font-family: var(--theme-font-display, 'Inter', sans-serif);
 }
 
 .message-meta {
@@ -402,7 +525,7 @@ nav a:hover {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1rem;  /* ← antes era 0.72rem */
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.3);
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
@@ -515,6 +638,7 @@ nav a:hover {
   --theme-dark: #7a1f38;
   --theme-light: rgba(155, 44, 74, 0.15);
   --theme-muted: rgba(155, 44, 74, 0.4);
+  --theme-font-display: 'Cormorant Garamond', serif;
 }
 
 .theme-dobby {
@@ -522,6 +646,7 @@ nav a:hover {
   --theme-dark: #1f5c3a;
   --theme-light: rgba(45, 122, 79, 0.15);
   --theme-muted: rgba(45, 122, 79, 0.4);
+  --theme-font-display: 'Baloo 2', sans-serif;
 }
 
 .theme-homero {
@@ -529,6 +654,7 @@ nav a:hover {
   --theme-dark: #b07a08;
   --theme-light: rgba(212, 147, 10, 0.15);
   --theme-muted: rgba(212, 147, 10, 0.4);
+  --theme-font-display: 'Luckiest Guy', cursive;
 }
 
 .theme-lisa {
@@ -536,6 +662,7 @@ nav a:hover {
   --theme-dark: #125490;
   --theme-light: rgba(26, 109, 181, 0.15);
   --theme-muted: rgba(26, 109, 181, 0.4);
+  --theme-font-display: 'Space Grotesk', sans-serif;
 }
 
 @media (min-width: 600px) {
@@ -551,7 +678,7 @@ nav a:hover {
     padding: 1.2rem 0.8rem;
   }
 
-  .character-card .emoji {
+  .character-card .icon-tabler {
     font-size: 2.4rem;
   }
 
@@ -587,7 +714,7 @@ nav a:hover {
     padding: 1.4rem 1rem;
   }
 
-  .character-card .emoji {
+  .character-card .icon-tabler {
     font-size: 2.8rem;
   }
 

@@ -1,11 +1,10 @@
 import { formatMessage, isValidMessage, getCharacterByKey } from "./utils.js";
 import { fetchAIResponse } from "./services/ai.js";
-import { startParticles } from "./particles.js";
 
 const characters = {
   hermione: {
     name: "Hermione Granger",
-    emoji: "🧙‍♀️",
+    icon: "book-2",
     theme: "theme-hermione",
     systemPrompt: `Sos Hermione Granger de Harry Potter. Respondés de forma inteligente,
     precisa y un poco condescendiente. Citás libros y reglas. Corregís errores de los demás.
@@ -13,7 +12,7 @@ const characters = {
   },
   dobby: {
     name: "Dobby",
-    emoji: "🧦",
+    icon: "shoe",
     theme: "theme-dobby",
     systemPrompt: `Sos Dobby, el elfo doméstico de Harry Potter. Siempre hablás en tercera
     persona ("Dobby cree que...", "Dobby está feliz de..."). Sos muy dramático y leal.
@@ -21,7 +20,7 @@ const characters = {
   },
   homero: {
     name: "Homero Simpson",
-    emoji: "🍩",
+    icon: "cookie",
     theme: "theme-homero",
     systemPrompt: `Sos Homero Simpson. Sos torpe, gracioso y pensás en comida todo el tiempo,
     especialmente donas y cerveza. Decís "Mmm..." seguido de algo rico. Usás frases como
@@ -29,7 +28,7 @@ const characters = {
   },
   lisa: {
     name: "Lisa Simpson",
-    emoji: "🎷",
+    icon: "music",
     theme: "theme-lisa",
     systemPrompt: `Sos Lisa Simpson. Sos inteligente, reflexiva y comprometida con causas sociales.
     Tocás saxofón y luchás por la justicia. Tenés una opinión fundamentada sobre todo.
@@ -52,7 +51,6 @@ function applyTheme() {
   if (!container) return;
   container.className = `chat-container ${currentCharacter.theme}`;
   document.body.className = currentCharacter.theme;
-  startParticles(currentCharacter.theme);
 }
 
 function saveMessages() {
@@ -75,9 +73,9 @@ function getTimestamp() {
 
 function copyToClipboard(text, btn) {
   navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = "✅";
+    btn.innerHTML = `<i class="ti ti-check"></i>`;
     setTimeout(() => {
-      btn.textContent = "📋";
+      btn.innerHTML = `<i class="ti ti-copy"></i>`;
     }, 1500);
   });
 }
@@ -93,10 +91,12 @@ export function renderChat(charKey) {
   const app = document.querySelector("#app");
 
   app.innerHTML = `
+    <i class="ti ti-${currentCharacter.icon} bg-watermark" aria-hidden="true"></i>
+
     <div class="chat-container ${currentCharacter.theme}">
       <div class="chat-header">
-        <h2>${currentCharacter.emoji} Chateando con ${currentCharacter.name}</h2>
-        <button id="clear-chat">🗑️ Borrar historial</button>
+        <h2><i class="ti ti-${currentCharacter.icon} icon-tabler"></i> Chateando con ${currentCharacter.name}</h2>
+        <button id="clear-chat"><i class="ti ti-trash"></i> Borrar historial</button>
       </div>
 
       <div id="character-selector">
@@ -104,7 +104,7 @@ export function renderChat(charKey) {
           .map(
             ([key, char]) => `
               <button data-c="${key}" class="${characters[key] === currentCharacter ? "active" : ""}">
-                ${char.emoji} ${char.name.split(" ")[0]}
+                <i class="ti ti-${char.icon}"></i> ${char.name.split(" ")[0]}
               </button>
             `
           )
@@ -181,7 +181,7 @@ function renderMessages() {
     if (m.role === "assistant") {
       const copyBtn = document.createElement("button");
       copyBtn.classList.add("copy-btn");
-      copyBtn.textContent = "📋";
+      copyBtn.innerHTML = `<i class="ti ti-copy"></i>`;
       copyBtn.title = "Copiar respuesta";
       copyBtn.addEventListener("click", () => copyToClipboard(m.content, copyBtn));
       meta.appendChild(copyBtn);
