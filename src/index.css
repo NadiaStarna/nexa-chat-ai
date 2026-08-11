@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background-color: #0A0A12;
+  color: #E2E2EA;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2A2A3A transparent;
+}
