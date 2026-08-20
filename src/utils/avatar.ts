@@ -6,7 +6,7 @@ export function getAvatarStyle(character: Character): CSSProperties {
     return {
       backgroundImage: `url(${character.imageUrl})`,
       backgroundSize: "cover",
-      backgroundPosition: "center",
+      backgroundPosition: "center 25%",    
     };
   }
   return { background: character.avatarGradient };
