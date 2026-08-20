@@ -15,8 +15,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "API key no configurada" });
   }
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
-
   const formattedMessages = messages
     .filter((m) => m?.content?.trim())
     .map((m) => ({
@@ -36,14 +34,20 @@ export default async function handler(req, res) {
     contents: formattedMessages
   };
 
-  const MAX_ATTEMPTS = 3; // intento original + 2 reintentos
-  const RETRY_DELAY_MS = 1200;
+  // Si el modelo principal está saturado (503), probamos con uno de respaldo
+  // en vez de reintentar una y otra vez sobre el mismo modelo lleno.
+  const MODELS = ["gemini-flash-latest", "gemini-2.5-flash"];
+  const RETRY_DELAY_MS = 900;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-  let lastErrorPayload = null;
+  let lastErrorPayload = { status: 500, error: "Error desconocido" };
 
-  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+  for (let i = 0; i < MODELS.length; i++) {
+    const model = MODELS[i];
+    const isLastModel = i === MODELS.length - 1;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
     try {
       const response = await fetch(url, {
         method: "POST",
@@ -54,17 +58,18 @@ export default async function handler(req, res) {
       const data = await response.json();
 
       if (!response.ok) {
-        // 503 = modelo saturado, vale la pena reintentar. Otros errores, no.
-        const shouldRetry = response.status === 503 && attempt < MAX_ATTEMPTS;
         lastErrorPayload = {
           status: response.status,
           error: data?.error?.message || "Error en Gemini",
           debug: data
         };
-        if (shouldRetry) {
+
+        // 503 = saturado: probamos el siguiente modelo (si queda alguno)
+        if (response.status === 503 && !isLastModel) {
           await sleep(RETRY_DELAY_MS);
           continue;
         }
+
         return res.status(lastErrorPayload.status).json({
           error: lastErrorPayload.error,
           debug: lastErrorPayload.debug
@@ -81,7 +86,7 @@ export default async function handler(req, res) {
 
     } catch (error) {
       lastErrorPayload = { status: 500, error: "Error al conectar con Gemini" };
-      if (attempt < MAX_ATTEMPTS) {
+      if (!isLastModel) {
         await sleep(RETRY_DELAY_MS);
         continue;
       }
@@ -89,8 +94,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // No debería llegar acá, pero por las dudas
-  return res.status(lastErrorPayload?.status || 500).json({
-    error: lastErrorPayload?.error || "Error desconocido"
+  return res.status(lastErrorPayload.status || 500).json({
+    error: lastErrorPayload.error
   });
 }
