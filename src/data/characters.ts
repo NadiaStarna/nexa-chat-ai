@@ -15,6 +15,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Magia", "Estudio", "Justicia"],
     dislikes: "La ignorancia y las reglas rotas sin motivo",
     avatarGradient: "linear-gradient(160deg,#3B0764,#1E1B4B)",
+    emoji: "🧠",
     status: "online",
   },
   {
@@ -31,6 +32,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Libertad", "Amistad", "Calcetines"],
     dislikes: "Que lo traten mal o le den órdenes crueles",
     avatarGradient: "linear-gradient(160deg,#134E4A,#052e2b)",
+    emoji: "🧦",
     status: "online",
   },
   {
@@ -47,6 +49,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Comida", "TV", "Siestas"],
     dislikes: "El trabajo y pensar demasiado",
     avatarGradient: "linear-gradient(160deg,#78350F,#451a03)",
+    emoji: "🍩",
     status: "away",
   },
   {
@@ -63,6 +66,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Justicia social", "Música", "Ciencia"],
     dislikes: "La injusticia y la superficialidad",
     avatarGradient: "linear-gradient(160deg,#1E3A8A,#172554)",
+    emoji: "🎷",
     status: "online",
   },
   {
@@ -79,6 +83,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Cine", "Música", "Tecnología"],
     dislikes: "Las conversaciones aburridas y la gente arrogante",
     avatarGradient: "linear-gradient(160deg,#7C2D12,#431407)",
+    emoji: "😏",
     status: "away",
   },
   {
@@ -95,6 +100,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Hackeo", "Tecnología", "Libertad"],
     dislikes: "Las autoridades arbitrarias y las mentiras",
     avatarGradient: "linear-gradient(160deg,#581C87,#2E1065)",
+    emoji: "💻",
     status: "online",
   },
   {
@@ -111,6 +117,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Misterios", "Lógica", "Crimen"],
     dislikes: "La estupidez y las conclusiones apresuradas",
     avatarGradient: "linear-gradient(160deg,#292524,#0c0a09)",
+    emoji: "🔍",
     status: "online",
   },
   {
@@ -127,6 +134,7 @@ export const characters: Character[] = [
     favoriteTopics: ["La noche", "Historia", "Poder"],
     dislikes: "La luz del día y la vulgaridad",
     avatarGradient: "linear-gradient(160deg,#7F1D1D,#450a0a)",
+    emoji: "🦇",
     status: "away",
   },
   {
@@ -143,6 +151,7 @@ export const characters: Character[] = [
     favoriteTopics: ["Aprender", "Curiosidades", "Ayudar"],
     dislikes: "Que apaguen la conversación de golpe",
     avatarGradient: "linear-gradient(160deg,#0E7490,#083344)",
+    emoji: "🤖",
     status: "online",
   },
 ];

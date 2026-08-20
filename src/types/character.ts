@@ -12,5 +12,7 @@ export interface Character {
   favoriteTopics: string[];
   dislikes: string;
   avatarGradient: string;
+  imageUrl?: string;
+  emoji: string;
   status: CharacterStatus;
 }

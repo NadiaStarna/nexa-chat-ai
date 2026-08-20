@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
+import { HoverPreviewProvider } from "./context/HoverPreviewContext";
+import { HoverPreviewPanel } from "./components/HoverPreviewPanel";
 import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
 import { Chat } from "./pages/Chat";
@@ -8,18 +11,23 @@ import { Favorites } from "./pages/Favorites";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat/:characterId" element={<Chat />} />
-          <Route path="/personajes" element={<Characters />} />
-          <Route path="/historial" element={<History />} />
-          <Route path="/favoritos" element={<Favorites />} />
-        </Routes>
-      </Layout>
-    </BrowserRouter>
+    <ThemeProvider>
+      <HoverPreviewProvider>
+        <BrowserRouter>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/chat/:characterId" element={<Chat />} />
+              <Route path="/personajes" element={<Characters />} />
+              <Route path="/historial" element={<History />} />
+              <Route path="/favoritos" element={<Favorites />} />
+            </Routes>
+          </Layout>
+          <HoverPreviewPanel />
+        </BrowserRouter>
+      </HoverPreviewProvider>
+    </ThemeProvider>
   );
 }
 

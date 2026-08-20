@@ -1,6 +1,8 @@
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
-import { IconMoon, IconBell, IconChevronDown } from "@tabler/icons-react";
+import { IconMoon, IconSun, IconChevronDown, IconUser, IconSettings, IconLogout } from "@tabler/icons-react";
 import { NexaLogo } from "./NexaLogo";
+import { useTheme } from "../context/ThemeContext";
 
 const navLinks = [
   { to: "/", label: "Inicio" },
@@ -11,13 +13,27 @@ const navLinks = [
 ];
 
 export function Navbar() {
+  const { theme, toggleTheme } = useTheme();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <nav className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-[#1A1A26]">
+    <nav className="flex items-center justify-between px-6 md:px-10 py-4 border-b border-[var(--border-soft)]">
       <NavLink to="/">
         <NexaLogo />
       </NavLink>
 
-      <div className="hidden md:flex items-center gap-9 text-sm text-slate-400">
+      <div className="hidden md:flex items-center gap-9 text-sm text-[var(--text-muted)]">
         {navLinks.map((link) => (
           <NavLink
             key={link.to}
@@ -25,8 +41,8 @@ export function Navbar() {
             end={link.to === "/"}
             className={({ isActive }) =>
               isActive
-                ? "text-white pb-4 border-b-2 border-indigo-400 -mb-4"
-                : "hover:text-white transition"
+                ? "text-[var(--text-primary)] pb-4 border-b-2 border-indigo-400 -mb-4"
+                : "hover:text-[var(--text-primary)] transition"
             }
           >
             {link.label}
@@ -35,21 +51,52 @@ export function Navbar() {
       </div>
 
       <div className="flex items-center gap-5">
-        <button aria-label="Cambiar tema" className="text-slate-400 hover:text-white transition">
-          <IconMoon size={20} stroke={1.6} />
+        <button
+          onClick={toggleTheme}
+          aria-label="Cambiar tema"
+          className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition"
+        >
+          {theme === "dark" ? <IconMoon size={20} stroke={1.6} /> : <IconSun size={20} stroke={1.6} />}
         </button>
-        <button aria-label="Notificaciones" className="relative text-slate-400 hover:text-white transition">
-          <IconBell size={20} stroke={1.6} />
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 text-[9px] flex items-center justify-center rounded-full bg-gradient-to-r from-[#4F8DF7] to-[#C026D3] text-white">
-            2
-          </span>
-        </button>
-        <div className="flex items-center gap-2 pl-3 border-l border-[#1E1E2B]">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4F8DF7] to-[#C026D3] flex items-center justify-center text-xs font-medium text-white">
-            N
-          </div>
-          <span className="hidden sm:block text-sm text-white">Nadia</span>
-          <IconChevronDown size={14} className="hidden sm:block text-slate-500" />
+
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex items-center gap-2 pl-3 border-l border-[var(--border-color)]"
+          >
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4F8DF7] to-[#C026D3] flex items-center justify-center text-xs font-medium text-white">
+              N
+            </div>
+            <span className="hidden sm:block text-sm text-[var(--text-primary)]">Nadia</span>
+            <IconChevronDown
+              size={14}
+              className={`hidden sm:block text-[var(--text-faint)] transition-transform ${menuOpen ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 mt-3 w-48 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl shadow-xl overflow-hidden py-1 z-50">
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] transition"
+              >
+                <IconUser size={16} /> Mi perfil
+              </button>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-surface-2)] hover:text-[var(--text-primary)] transition"
+              >
+                <IconSettings size={16} /> Configuración
+              </button>
+              <div className="h-px bg-[var(--border-color)] my-1" />
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-rose-400 hover:bg-[var(--bg-surface-2)] transition"
+              >
+                <IconLogout size={16} /> Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>

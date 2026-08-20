@@ -15,27 +15,31 @@ export function NexaLogo({ size = 32, withWordmark = true }: NexaLogoProps) {
           </linearGradient>
         </defs>
         <path
-          d="M20 18 h60 a12 12 0 0 1 12 12 v32 a12 12 0 0 1 -12 12 h-33 l-17 17 v-17 h-10 a12 12 0 0 1 -12 -12 v-32 a12 12 0 0 1 12 -12 z"
+          d="M50 8
+             C 74 8 92 24.5 92 46
+             C 92 62 82 74.5 67 80
+             L 67 92
+             L 52 80.5
+             C 51.3 80.5 50.7 80.5 50 80.5
+             C 26 80.5 8 64 8 46
+             C 8 24.5 26 8 50 8 Z"
           fill="url(#nexaLogoGrad)"
         />
         <text
-          x="50"
-          y="53"
+          x="48"
+          y="47"
           textAnchor="middle"
-          fontSize="32"
-          fontWeight="700"
+          dominantBaseline="central"
+          fontSize="44"
+          fontWeight="800"
           fill="#0A0A12"
+          fontFamily="Inter, system-ui, sans-serif"
         >
           N
         </text>
       </svg>
       {withWordmark && (
-        <div className="flex items-center gap-1">
-          <span className="text-lg font-semibold text-white">Nexa</span>
-          <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-gradient-to-r from-[#4F8DF7] via-[#818CF8] to-[#C026D3] text-white">
-            AI
-          </span>
-        </div>
+        <span className="text-lg font-bold text-[var(--text-primary)] tracking-tight">Nexa</span>
       )}
     </div>
   );

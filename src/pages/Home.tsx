@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconSparkles,
@@ -38,20 +39,66 @@ const features = [
   },
 ];
 
+// Triplicamos la lista para poder hacer loop infinito: arrancamos parados
+// en la copia del medio, y cuando el scroll se acerca a un extremo lo
+// reacomodamos de golpe (sin animación) al punto equivalente de la copia
+// del medio, así nunca se nota el "corte".
+const loopedCharacters = [...characters, ...characters, ...characters];
+
 export function Home() {
   const navigate = useNavigate();
-  const featured = characters.slice(0, 4);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const autoScrollRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (el) {
+      el.scrollLeft = el.scrollWidth / 3;
+    }
+  }, []);
+
+  const normalizeLoop = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const setWidth = el.scrollWidth / 3;
+    if (el.scrollLeft < setWidth * 0.5) {
+      el.scrollLeft += setWidth;
+    } else if (el.scrollLeft > setWidth * 1.5) {
+      el.scrollLeft -= setWidth;
+    }
+  };
+
+  const scroll = (direction: 1 | -1) => {
+    scrollRef.current?.scrollBy({ left: direction * 300, behavior: "smooth" });
+  };
+
+  const startAutoScroll = (direction: 1 | -1) => {
+    stopAutoScroll();
+    autoScrollRef.current = window.setInterval(() => {
+      scrollRef.current?.scrollBy({ left: direction * 6 });
+    }, 16);
+  };
+
+  const stopAutoScroll = () => {
+    if (autoScrollRef.current !== null) {
+      clearInterval(autoScrollRef.current);
+      autoScrollRef.current = null;
+    }
+  };
 
   return (
     <div>
-      <section className="text-center pt-16 pb-12 px-6">
-        <h1 className="text-3xl md:text-[2.6rem] leading-tight font-semibold text-white mb-2">
+      <section className="text-center pt-10 pb-8 px-6">
+        <div className="inline-flex items-center gap-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full px-3 py-1 text-[11px] text-indigo-300 mb-4">
+          <IconSparkles size={12} /> Impulsado por Gemini AI
+        </div>
+        <h1 className="text-4xl md:text-5xl leading-tight font-bold text-[var(--text-primary)] mb-1">
           Chateá con tu
         </h1>
-        <h1 className="text-3xl md:text-[2.6rem] leading-tight font-semibold mb-4 bg-gradient-to-r from-[#38BDF8] via-[#818CF8] to-[#E879F9] bg-clip-text text-transparent">
-          personaje favorito <IconSparkles className="inline w-8 h-8" />
+        <h1 className="text-4xl md:text-5xl leading-tight font-bold mb-3 bg-gradient-to-r from-[#38BDF8] via-[#818CF8] to-[#E879F9] bg-clip-text text-transparent text-shimmer">
+          personaje favorito <IconSparkles className="inline w-9 h-9 text-fuchsia-400" />
         </h1>
-        <p className="text-slate-400 max-w-md mx-auto mb-7 text-sm leading-relaxed">
+        <p className="text-[var(--text-muted)] max-w-md mx-auto mb-5 text-sm leading-relaxed">
           Elegí un personaje y empezá una conversación única.
           <br />
           Cada uno tiene su propia personalidad, historia y forma de responder.
@@ -66,24 +113,48 @@ export function Home() {
 
       <section className="px-6 pb-14">
         <div className="flex items-center gap-4 max-w-5xl mx-auto">
-          <IconChevronLeft className="text-slate-500 shrink-0" size={22} />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 flex-1">
-            {featured.map((character) => (
-              <CharacterCard key={character.id} character={character} />
+          <button
+            onClick={() => scroll(-1)}
+            onMouseEnter={() => startAutoScroll(-1)}
+            onMouseLeave={stopAutoScroll}
+            className="text-[var(--text-faint)] hover:text-[var(--text-primary)] transition shrink-0"
+            aria-label="Ver personajes anteriores"
+          >
+            <IconChevronLeft size={22} />
+          </button>
+
+          <div
+            ref={scrollRef}
+            onScroll={normalizeLoop}
+            className="flex gap-5 overflow-x-auto flex-1 no-scrollbar pb-3"
+          >
+            {loopedCharacters.map((character, index) => (
+              <div key={`${character.id}-${index}`} className="shrink-0 w-[46%] sm:w-[31%] md:w-[23%]">
+                <CharacterCard character={character} />
+              </div>
             ))}
           </div>
-          <IconChevronRight className="text-slate-500 shrink-0" size={22} />
+
+          <button
+            onClick={() => scroll(1)}
+            onMouseEnter={() => startAutoScroll(1)}
+            onMouseLeave={stopAutoScroll}
+            className="text-[var(--text-faint)] hover:text-[var(--text-primary)] transition shrink-0"
+            aria-label="Ver más personajes"
+          >
+            <IconChevronRight size={22} />
+          </button>
         </div>
       </section>
 
       <section className="max-w-5xl mx-auto px-6 md:px-10 pb-16">
-        <div className="bg-[#12121C] border border-[#1E1E2B] rounded-2xl grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[#1E1E2B]">
+        <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-2xl grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-[var(--border-color)]">
           {features.map((feature) => (
             <div key={feature.title} className="p-5 flex items-start gap-3">
               <feature.icon className={`${feature.color} mt-0.5`} size={22} stroke={1.6} />
               <div>
-                <p className="font-medium text-white text-sm">{feature.title}</p>
-                <p className="text-slate-400 text-xs mt-1">{feature.description}</p>
+                <p className="font-medium text-[var(--text-primary)] text-sm">{feature.title}</p>
+                <p className="text-[var(--text-muted)] text-xs mt-1">{feature.description}</p>
               </div>
             </div>
           ))}
