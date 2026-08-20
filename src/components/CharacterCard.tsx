@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import type { Character } from "../types/character";
 import { getAvatarStyle } from "../utils/avatar";
 import { useHoverPreview } from "../context/HoverPreviewContext";
+import { FavoriteButton } from "./FavoriteButton";
 
 interface CharacterCardProps {
   character: Character;
   showChatButton?: boolean;
+  onFavoriteToggle?: (isFavorite: boolean) => void;
 }
 
 const statusColor: Record<Character["status"], string> = {
@@ -14,12 +16,15 @@ const statusColor: Record<Character["status"], string> = {
   away: "bg-amber-400",
 };
 
-export function CharacterCard({ character, showChatButton = false }: CharacterCardProps) {
+export function CharacterCard({ character, showChatButton = false, onFavoriteToggle }: CharacterCardProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
   const { showPreview, hidePreview } = useHoverPreview();
 
-  const goToChat = () => navigate(`/chat/${character.id}`);
+  const goToChat = () => {
+    hidePreview();
+    navigate(`/chat/${character.id}`);
+  };
 
   const handleMouseEnter = () => {
     if (cardRef.current) {
@@ -42,8 +47,14 @@ export function CharacterCard({ character, showChatButton = false }: CharacterCa
         {!character.imageUrl && (
           <span className="text-5xl drop-shadow-lg">{character.emoji}</span>
         )}
+        <FavoriteButton
+          characterId={character.id}
+          size={16}
+          onToggle={onFavoriteToggle}
+          className="absolute top-3 left-3 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white/90"
+        />
         <span
-          className={`absolute top-3 right-3 w-3 h-3 rounded-full ${statusColor[character.status]} shadow-[0_0_0_3px_var(--bg-surface)]`}
+          className={`absolute top-5 right-3 w-3 h-3 rounded-full ${statusColor[character.status]} shadow-[0_0_0_3px_var(--bg-surface)]`}
         />
       </div>
       <div className="p-4">
@@ -53,7 +64,7 @@ export function CharacterCard({ character, showChatButton = false }: CharacterCa
           {character.tags.map((tag) => (
             <span
               key={tag}
-              className="text-[11px] px-2.5 py-1 rounded-full bg-indigo-500/15 text-indigo-300"
+              className="text-[11px] px-2.5 py-1 rounded-full bg-indigo-500/15 text-[var(--accent-indigo)]"
             >
               {tag}
             </span>

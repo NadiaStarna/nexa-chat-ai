@@ -42,19 +42,19 @@ export function HoverPreviewPanel() {
 
       <div className="space-y-3">
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-indigo-400 flex items-center gap-1 mb-1">
+          <p className="text-[10px] uppercase tracking-wide text-[var(--accent-indigo)] flex items-center gap-1 mb-1">
             <IconMessageCircle size={12} /> Estilo de charla
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.chatStyle}</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-fuchsia-400 flex items-center gap-1 mb-1">
+          <p className="text-[10px] uppercase tracking-wide text-[var(--accent-fuchsia)] flex items-center gap-1 mb-1">
             <IconSparkles size={12} /> Temas favoritos
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.favoriteTopics.join(", ")}</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-wide text-rose-400 flex items-center gap-1 mb-1">
+          <p className="text-[10px] uppercase tracking-wide text-[var(--accent-rose)] flex items-center gap-1 mb-1">
             <IconX size={12} /> No le gusta
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.dislikes}</p>
@@ -65,7 +65,7 @@ export function HoverPreviewPanel() {
         {character.tags.map((tag) => (
           <span
             key={tag}
-            className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300"
+            className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/15 text-[var(--accent-indigo)]"
           >
             {tag}
           </span>

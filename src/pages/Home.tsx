@@ -15,25 +15,25 @@ import { CharacterCard } from "../components/CharacterCard";
 const features = [
   {
     icon: IconBolt,
-    color: "text-indigo-400",
+    color: "text-[var(--accent-indigo)]",
     title: "Respuestas inteligentes",
     description: "IA avanzada que entiende el contexto.",
   },
   {
     icon: IconShieldCheck,
-    color: "text-sky-400",
+    color: "text-[var(--accent-sky)]",
     title: "Privado y seguro",
     description: "Tus charlas quedan protegidas.",
   },
   {
     icon: IconStar,
-    color: "text-fuchsia-400",
+    color: "text-[var(--accent-fuchsia)]",
     title: "Personajes únicos",
     description: "Personalidades propias y detalladas.",
   },
   {
     icon: IconHistory,
-    color: "text-purple-400",
+    color: "text-[var(--accent-purple)]",
     title: "Historial guardado",
     description: "Volvé a tus charlas cuando quieras.",
   },
@@ -89,14 +89,11 @@ export function Home() {
   return (
     <div>
       <section className="text-center pt-10 pb-8 px-6">
-        <div className="inline-flex items-center gap-1.5 bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-full px-3 py-1 text-[11px] text-indigo-300 mb-4">
-          <IconSparkles size={12} /> Impulsado por Gemini AI
-        </div>
         <h1 className="text-4xl md:text-5xl leading-tight font-bold text-[var(--text-primary)] mb-1">
           Chateá con tu
         </h1>
         <h1 className="text-4xl md:text-5xl leading-tight font-bold mb-3 bg-gradient-to-r from-[#38BDF8] via-[#818CF8] to-[#E879F9] bg-clip-text text-transparent text-shimmer">
-          personaje favorito <IconSparkles className="inline w-9 h-9 text-fuchsia-400" />
+          personaje favorito <IconSparkles className="inline w-9 h-9 text-[var(--accent-fuchsia)]" />
         </h1>
         <p className="text-[var(--text-muted)] max-w-md mx-auto mb-5 text-sm leading-relaxed">
           Elegí un personaje y empezá una conversación única.
@@ -126,7 +123,7 @@ export function Home() {
           <div
             ref={scrollRef}
             onScroll={normalizeLoop}
-            className="flex gap-5 overflow-x-auto flex-1 no-scrollbar pb-3"
+            className="flex gap-5 overflow-x-auto flex-1 no-scrollbar pb-1"
           >
             {loopedCharacters.map((character, index) => (
               <div key={`${character.id}-${index}`} className="shrink-0 w-[46%] sm:w-[31%] md:w-[23%]">

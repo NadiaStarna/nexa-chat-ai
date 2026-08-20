@@ -14,6 +14,12 @@
   --text-faint: #64748B;
   --text-dim: #475569;
   --scrollbar-thumb: #2A2A3A;
+  --accent-indigo: #A5B4FC;
+  --accent-fuchsia: #F0ABFC;
+  --accent-rose: #FDA4AF;
+  --accent-purple: #D8B4FE;
+  --accent-amber: #FCD34D;
+  --accent-sky: #7DD3FC;
 }
 
 .light {
@@ -29,6 +35,12 @@
   --text-faint: #7A7A8C;
   --text-dim: #9898A8;
   --scrollbar-thumb: #D4D4E0;
+  --accent-indigo: #4338CA;
+  --accent-fuchsia: #A21CAF;
+  --accent-rose: #BE123C;
+  --accent-purple: #7E22CE;
+  --accent-amber: #B45309;
+  --accent-sky: #0369A1;
 }
 
 html, body, #root {
@@ -74,4 +86,9 @@ h1, h2, h3, .font-display {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes nexaFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }

@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IconSearch, IconStar, IconStarFilled, IconCalendar, IconChevronDown } from "@tabler/icons-react";
+import { IconSearch, IconCalendar, IconChevronDown } from "@tabler/icons-react";
 import { characters, getCharacterById } from "../data/characters";
 import { getAllConversations, type ConversationEntry } from "../utils/chatStorage";
 import { getRelativeDayLabel } from "../utils/dateLabels";
-import { isFavorite, toggleFavorite } from "../utils/favorites";
+import { isFavorite } from "../utils/favorites";
 import { Avatar } from "../components/Avatar";
+import { FavoriteButton } from "../components/FavoriteButton";
+import { BackButton } from "../components/BackButton";
 
 type StatusFilter = "todos" | "favoritos";
 
@@ -17,7 +19,7 @@ export function History() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("todos");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [, forceRerender] = useState(0);
+  const [favoritesVersion, setFavoritesVersion] = useState(0);
 
   useEffect(() => {
     setConversations(getAllConversations());
@@ -42,23 +44,20 @@ export function History() {
 
       return matchesSearch && matchesCharacter && matchesStatus && matchesFrom && matchesTo;
     });
-  }, [conversations, search, characterFilter, statusFilter, dateFrom, dateTo]);
-
-  const handleToggleFavorite = (characterId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    toggleFavorite(characterId);
-    forceRerender((n) => n + 1);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conversations, search, characterFilter, statusFilter, dateFrom, dateTo, favoritesVersion]);
 
   const clearFilters = () => {
     setCharacterFilter("todos");
     setStatusFilter("todos");
     setDateFrom("");
     setDateTo("");
+    setSearch("");
   };
 
   return (
     <div className="max-w-5xl mx-auto px-6 py-8">
+      <BackButton />
       <h1 className="text-2xl font-semibold text-[var(--text-primary)] mb-1">
         Historial de{" "}
         <span className="bg-gradient-to-r from-[#38BDF8] via-[#818CF8] to-[#E879F9] bg-clip-text text-transparent">
@@ -79,7 +78,11 @@ export function History() {
             />
           </div>
 
-          {filtered.length === 0 ? (
+          {conversations.length === 0 ? (
+            <p className="text-center text-[var(--text-faint)] text-sm py-10">
+              Todavía no tenés conversaciones. Andá al Chat y empezá a hablar con algún personaje.
+            </p>
+          ) : filtered.length === 0 ? (
             <p className="text-center text-[var(--text-faint)] text-sm py-10">
               No encontramos conversaciones con esos filtros.
             </p>
@@ -87,7 +90,6 @@ export function History() {
             <div className="space-y-2">
               {filtered.map((entry) => {
                 const character = getCharacterById(entry.characterId)!;
-                const fav = isFavorite(entry.characterId);
 
                 return (
                   <div
@@ -102,13 +104,11 @@ export function History() {
                     </div>
                     <div className="text-right shrink-0 flex flex-col items-end gap-1">
                       <p className="text-xs text-[var(--text-faint)]">{getRelativeDayLabel(entry.lastMessageAt)}</p>
-                      <button onClick={(e) => handleToggleFavorite(entry.characterId, e)}>
-                        {fav ? (
-                          <IconStarFilled size={15} className="text-amber-400" />
-                        ) : (
-                          <IconStar size={15} className="text-[var(--text-dim)] hover:text-amber-400 transition" />
-                        )}
-                      </button>
+                      <FavoriteButton
+                        characterId={entry.characterId}
+                        size={15}
+                        onToggle={() => setFavoritesVersion((v) => v + 1)}
+                      />
                     </div>
                   </div>
                 );
@@ -121,7 +121,7 @@ export function History() {
           <div className="bg-[var(--bg-surface)] border border-[var(--border-color)] rounded-xl p-5 space-y-5">
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-[var(--text-primary)]">Filtros</p>
-              <button onClick={clearFilters} className="text-xs text-indigo-400 hover:text-indigo-300">
+              <button onClick={clearFilters} className="text-xs text-[var(--accent-indigo)] hover:text-[var(--accent-indigo)]">
                 Limpiar
               </button>
             </div>

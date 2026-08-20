@@ -22,19 +22,19 @@ export function CharacterProfilePanel({ character }: CharacterProfilePanelProps)
 
       <div className="w-full text-left space-y-4">
         <div>
-          <p className="text-[11px] text-indigo-400 flex items-center gap-1.5 mb-1">
+          <p className="text-[11px] text-[var(--accent-indigo)] flex items-center gap-1.5 mb-1">
             <IconMessageCircle size={13} /> Estilo de charla
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.chatStyle}</p>
         </div>
         <div>
-          <p className="text-[11px] text-fuchsia-400 flex items-center gap-1.5 mb-1">
+          <p className="text-[11px] text-[var(--accent-fuchsia)] flex items-center gap-1.5 mb-1">
             <IconSparkles size={13} /> Temas favoritos
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.favoriteTopics.join(", ")}</p>
         </div>
         <div>
-          <p className="text-[11px] text-rose-400 flex items-center gap-1.5 mb-1">
+          <p className="text-[11px] text-[var(--accent-rose)] flex items-center gap-1.5 mb-1">
             <IconX size={13} /> No le gusta
           </p>
           <p className="text-xs text-[var(--text-muted)]">{character.dislikes}</p>
@@ -43,7 +43,7 @@ export function CharacterProfilePanel({ character }: CharacterProfilePanelProps)
 
       <button
         onClick={() => navigate("/personajes")}
-        className="mt-6 text-xs text-indigo-300 border border-indigo-500/30 rounded-lg px-4 py-2 w-full hover:bg-indigo-500/10 transition"
+        className="mt-6 text-xs text-[var(--accent-indigo)] border border-indigo-500/30 rounded-lg px-4 py-2 w-full hover:bg-indigo-500/10 transition"
       >
         Ver perfil completo
       </button>
