@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
   // Si el modelo principal está saturado (503), probamos con uno de respaldo
   // en vez de reintentar una y otra vez sobre el mismo modelo lleno.
-  const MODELS = ["gemini-flash-latest", "gemini-2.5-flash"];
+  const MODELS = ["gemini-flash-latest", "gemini-3.6-flash"];
   const RETRY_DELAY_MS = 900;
 
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
