@@ -1,32 +1,38 @@
-# React + TypeScript + Vite
+# Nexa
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Chateá con personajes de IA, cada uno con su propia personalidad, historia y forma de responder.
 
-Currently, two official plugins are available:
+**Demo en vivo:** [nexa-chat-ai.vercel.app](https://nexa-chat-ai.vercel.app)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+> 🚧 Proyecto en mejora activa — se está migrando de una versión vanilla JS a React, con nuevas pantallas y funcionalidades sumándose constantemente.
 
-## React Compiler
+## Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React + TypeScript + Vite
+- Tailwind CSS v4
+- React Router
+- Google Gemini AI (respuestas de los personajes)
+- Vercel Serverless Functions
+- Firebase (Auth / Firestore) — en progreso
 
-## Expanding the Oxlint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+- **Chat con personajes**: conversaciones con personalidades distintas, impulsadas por Gemini AI
+- **Explorar personajes**: búsqueda y filtro por categoría
+- **Historial de conversaciones**: con filtros por fecha, personaje y favoritos
+- **Favoritos**: guardá tus personajes preferidos
+- **Modo claro / oscuro**
+- **Diseño responsive**
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## Correr el proyecto local
+
+```bash
+npm install
+vercel dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Necesitás una variable de entorno `GEMINI_API_KEY` en un archivo `.env` en la raíz del proyecto (conseguí la tuya en [Google AI Studio](https://aistudio.google.com/)).
+
+## Autora
+
+Nadia Starna — [GitHub](https://github.com/NadiaStarna)
